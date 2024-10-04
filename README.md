@@ -8,8 +8,6 @@ Este repositorio contiene el desarrollo del sistema de reservas de turnos para l
 - [Clonación del Repositorio](#clonación-del-repositorio)
 - [Instalación de Dependencias](#instalación-de-dependencias)
 - [Ejecución de la Aplicación](#ejecución-de-la-aplicación)
-- [Contribuciones](#contribuciones)
-- [Contacto](#contacto)
 
 ## Requerimientos
 
