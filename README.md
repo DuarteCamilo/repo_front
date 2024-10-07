@@ -45,7 +45,7 @@ Este repositorio contiene el desarrollo del sistema de reservas de turnos para l
 Para clonar el repositorio, ejecuta el siguiente comando en tu terminal: 
 
 ```bash
-git clone https://github.com/DuarteCamilo/repo_front/
+git clone https://github.com/DuarteCamilo/repo_front.git
 ```
 
 ## Instalación de Dependencias
