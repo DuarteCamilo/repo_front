@@ -35,11 +35,11 @@ const Login = () => {
         try {
             const data = await loginUser(email, password)
 
-            if (data.token) {
-                console.log('Usuario autenticado', data)
+            if (data.user) {
+                localStorage.setItem('user', JSON.stringify(data.user))
 
                 if (data.user.role === 'admin') {
-                    navigate('/admin/home')
+                    navigate('/admin/dentistas')
                 } else {
                     console.log('El usuario es paciente')
                 }
