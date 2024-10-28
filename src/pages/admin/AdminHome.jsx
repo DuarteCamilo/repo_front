@@ -1,9 +1,9 @@
-import React from 'react'
+import Sidebar from "../../components/Sidebar/Sidebar"
 
 const AdminHome = () => {
     return (
         <div>
-            <h1>AdminHome</h1>
+            <Sidebar userRole="admin" />
         </div>
     )
 }
