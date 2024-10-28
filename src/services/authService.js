@@ -17,7 +17,7 @@ export const loginUser = async (email, password) => {
 
         return await response.json()
     } catch (error) {
-        console.log('Error en la autenticación:', error)
+        console.error('Error en la autenticación:', error)
         throw error;
     }
 }

@@ -3,7 +3,7 @@ const config = {
         API_URL: 'http://localhost:3000',
     },
     production: {
-        API_URL: 'https://api.myapp.com',
+        API_URL: 'http://54.165.154.95:9000',
     }
 }
 
