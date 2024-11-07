@@ -1,23 +1,19 @@
+import axios from "axios";
 import config from "../config/config";
+
+const api = axios.create({
+    baseURL: config.API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    },
+})
 
 export const loginUser = async (email, password) => {
     try {
-        const response = await fetch(`${config.API_URL}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        })
-
-        if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(errorData.message)
-        }
-
-        return await response.json()
+        const response = await api.post('/login', { email, password });
+        return response.data;
     } catch (error) {
-        console.error('Error en la autenticación:', error)
-        throw error;
+        console.error('Error logging in:', error.response?.data?.message || error.message);
+        throw new Error(error.response?.data?.message || 'Error logging in');
     }
 }
