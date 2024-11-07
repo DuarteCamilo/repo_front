@@ -1,31 +1,42 @@
-import { FaSignOutAlt, FaUser } from "react-icons/fa"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { FaCalendar, FaCalendarAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { IoIosSettings } from "react-icons/io";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const sidebarItems = {
     admin: [
         { path: '/admin/dentistas', label: 'Dentistas', icon: <FaUser /> },
         { path: '/admin/pacientes', label: 'Pacientes', icon: <FaUser /> },
+    ],
+    dentist: [
+        { path: '/dentista/citas', label: 'Citas', icon: <FaCalendarAlt /> },
+    ],
+    patient: [
+        { path: '/paciente/inicio', label: 'Citas', icon: <FaCalendar /> },
     ]
-}
+};
 
 const Sidebar = () => {
-    const location = useLocation()
-    const navigate = useNavigate()
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    const user = JSON.parse(localStorage.getItem('user')) || {}
-    const { username = '', role = '' } = user
+    const isInScheduleRoute = ['/dentista/jornada', '/dentista/inactividad'].includes(location.pathname);
+    const [isScheduleOpen, setIsScheduleOpen] = useState(isInScheduleRoute);
+
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    const { username = '', role = '' } = user;
 
     const getInitials = (name) => {
         return name.split(' ').map(word => word[0]).join('').toUpperCase()
-    }
+    };
 
-    const initials = getInitials(username)
-    const items = sidebarItems[role] || []
+    const initials = getInitials(username);
+    const items = sidebarItems[role] || [];
 
     const handleLogout = () => {
         localStorage.removeItem('user')
         navigate('/')
-    }
+    };
 
     return (
         <div className="w-64 h-screen text-gray-800 shadow-lg flex flex-col border-r border-gray-200">
@@ -33,7 +44,7 @@ const Sidebar = () => {
                 <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-700 text-white text-xl font-semibold">
                     {initials}
                 </div>
-                <p className="flex items-center justify-center mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 border border-blue-300 text-blue-700">{role}</p>
+                <p className="flex items-center justify-center mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 border border-blue-300 text-blue-700 uppercase">{role}</p>
             </div>
 
             <ul className="flex flex-col space-y-2 p-4">
@@ -52,14 +63,57 @@ const Sidebar = () => {
                                 {item.label}
                             </span>
                         </Link>
+
                     </li>
                 ))}
+
+                {/* dropdown only for dentist */}
+                {role === 'dentist' && (
+                    <li>
+                        <button
+                            onClick={() => setIsScheduleOpen(!isScheduleOpen)}
+                            className='flex items-center w-full p-3 rounded-lg transition-colors duration-200 group hover:bg-gray-100 hover:text-blue-700 hover:font-semibold'
+                        >
+                            <span className="group-hover:text-blue-700">
+                                <IoIosSettings />
+                            </span>
+                            <span className='ml-4 transition-colors duration-200 text-gray-600 group-hover:text-blue-700'>
+                                Gestión
+                            </span>
+                        </button>
+                        {isScheduleOpen && (
+                            <ul className="ml-8 mt-2 space-y-2">
+                                <li>
+                                    <Link
+                                        to='/dentista/jornada'
+                                        className={`flex items-center p-3 rounded-lg transition-colors duration-200 group 
+                ${location.pathname === '/dentista/jornada' ? 'bg-gray-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 hover:text-blue-700 hover:font-semibold'}`
+                                        }
+                                    >
+                                        Jornada
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        to='/dentista/inactividad'
+                                        className={`flex items-center p-3 rounded-lg transition-colors duration-200 group 
+                ${location.pathname === '/dentista/inactividad' ? 'bg-gray-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 hover:text-blue-700 hover:font-semibold'}`
+                                        }
+                                    >
+                                        Inactividad
+                                    </Link>
+                                </li>
+                            </ul>
+                        )}
+                    </li>
+                )}
+
             </ul>
 
 
             <div className="mt-auto p-4">
-                <button 
-                    onClick={handleLogout} 
+                <button
+                    onClick={handleLogout}
                     className="flex items-center w-full p-3 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
                 >
                     <FaSignOutAlt className="mr-2" />

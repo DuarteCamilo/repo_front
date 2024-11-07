@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchPatients } from "../../services/patientService"
 import Sidebar from "../../components/Sidebar/Sidebar"
+import '../../styles/Table.css'
 
 const Patients = () => {
     const [patients, setPatients] = useState([])
@@ -42,30 +43,28 @@ const Patients = () => {
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg shadow-lg">
-                    <table className="min-w-full bg-white border border-gray-200">
-                        <thead className="bg-blue-700 text-white">
-                            <tr>
-                                <th className="border border-gray-200 px-4 py-2 font-medium">DNI</th>
-                                <th className="border border-gray-200 px-4 py-2 font-medium">Nombres</th>
-                                <th className="border border-gray-200 px-4 py-2 font-medium">Apellidos</th>
-                                <th className="border border-gray-200 px-4 py-2 font-medium">Ciudad Residencia</th>
-                                <th className="border border-gray-200 px-4 py-2 font-medium">Correo Electrónico</th>
+                <table className="custom-table">
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Ciudad Residencia</th>
+                            <th>Correo Electrónico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredPatients.map((patient) => (
+                            <tr key={patient.dni}>
+                                <td>{patient.dni}</td>
+                                <td>{patient.firstName}</td>
+                                <td>{patient.lastName}</td>
+                                <td>{patient.city}</td>
+                                <td>{patient.email}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {filteredPatients.map((patient) => (
-                                <tr key={patient.dni} className="hover:bg-blue-100 transition-colors duration-300">
-                                    <td className="border border-gray-200 px-4 py-2">{patient.dni}</td>
-                                    <td className="border border-gray-200 px-4 py-2">{patient.firstName}</td>
-                                    <td className="border border-gray-200 px-4 py-2">{patient.lastName}</td>
-                                    <td className="border border-gray-200 px-4 py-2">{patient.city}</td>
-                                    <td className="border border-gray-200 px-4 py-2">{patient.email}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

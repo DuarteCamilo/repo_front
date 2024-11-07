@@ -1,0 +1,19 @@
+.custom-table {
+    @apply min-w-full overflow-hidden rounded-lg shadow-lg;
+}
+
+.custom-table thead {
+    @apply bg-blue-700 text-white;
+}
+
+.custom-table thead tr th {
+    @apply border border-gray-200 px-4 py-2 font-medium;
+}
+
+.custom-table tbody tr {
+    @apply hover:bg-blue-50 transition-colors duration-300;
+}
+
+.custom-table tbody tr td {
+    @apply border border-gray-200 px-4 py-2;
+}

@@ -40,8 +40,10 @@ const Login = () => {
 
                 if (data.user.role === 'admin') {
                     navigate('/admin/dentistas')
-                } else {
-                    console.log('El usuario es paciente')
+                } else if (data.user.role === 'dentist') {
+                    navigate('/dentista/citas')
+                } else if (data.user.role === 'patient') {
+                    navigate('/paciente/inicio')
                 }
             }
         } catch (error) {
@@ -56,7 +58,7 @@ const Login = () => {
                 <h1 className='text-4xl font-bold text-gray-800'>Bienvenido a</h1>
                 <h2 className='text-5xl font-bold text-blue-500'>Adiós Caries</h2>
                 <p className='mt-4 text-gray-600'>
-                   Inicia sesión para acceder a tu cuenta: agenda tus citas y gestiona tu salud dental con facilidad. 
+                    Inicia sesión para acceder a tu cuenta: agenda tus citas y gestiona tu salud dental con facilidad.
                 </p>
             </div>
 
