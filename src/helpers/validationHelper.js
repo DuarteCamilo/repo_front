@@ -4,7 +4,7 @@ export const isValidEmail = (email) => {
 }
 
 export const areFieldsEmpty = (fields) => {
-    return fields.some(field => field.trim() === '')
+    return fields.some(field => String(field).trim() === '');
 }
 
 export const isValidPassword = (password) => {

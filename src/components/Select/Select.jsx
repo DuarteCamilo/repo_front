@@ -1,4 +1,4 @@
-import { RiArrowDownSLine } from 'react-icons/ri'
+import { RiArrowDownSLine } from 'react-icons/ri';
 
 const Select = ({ icon, name, value, onChange, options, placeholder }) => {
     return (
