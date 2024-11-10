@@ -1,16 +1,19 @@
-import config from "../config/config";
+import axios from "axios";
+
+const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    // baseURL: 'http://localhost:3000',
+    headers: {
+        "Content-Type": "application/json",
+    },
+})
 
 export const fetchPatients = async () => {
     try {
-        const response = await fetch(`${config.API_URL}/patients`);
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message);
-        }
-        return await response.json();
+        const response = await api.get('/patients');
+        return response.data
     } catch (error) {
         console.error('Error fetching patients:', error);
-        throw error;
+        throw new Error(error.response?.data?.message || 'Error fetching patients')
     }
 }
