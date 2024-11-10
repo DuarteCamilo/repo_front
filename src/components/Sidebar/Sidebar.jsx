@@ -5,11 +5,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const sidebarItems = {
     admin: [
-        { path: '/admin/dentistas', label: 'Dentistas', icon: <FaUser /> },
+        { path: '/admin/odontologos', label: 'Odontólogos', icon: <FaUser /> },
         { path: '/admin/pacientes', label: 'Pacientes', icon: <FaUser /> },
     ],
     dentist: [
-        { path: '/dentista/citas', label: 'Citas', icon: <FaCalendarAlt /> },
+        { path: '/odontologo/citas', label: 'Citas', icon: <FaCalendarAlt /> },
     ],
     patient: [
         { path: '/paciente/inicio', label: 'Citas', icon: <FaCalendar /> },
@@ -20,7 +20,7 @@ const Sidebar = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const isInScheduleRoute = ['/dentista/jornada', '/dentista/inactividad'].includes(location.pathname);
+    const isInScheduleRoute = ['/odontologo/jornada', '/odontologo/inactividad'].includes(location.pathname);
     const [isScheduleOpen, setIsScheduleOpen] = useState(isInScheduleRoute);
 
     const user = JSON.parse(localStorage.getItem('user')) || {};
@@ -44,7 +44,9 @@ const Sidebar = () => {
                 <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-700 text-white text-xl font-semibold">
                     {initials}
                 </div>
-                <p className="flex items-center justify-center mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 border border-blue-300 text-blue-700 uppercase">{role}</p>
+                <p className="flex items-center justify-center mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 border border-blue-300 text-blue-700 uppercase">
+                    {role === 'admin' ? 'Administrador' : 'dentist' ? 'Odontólogo' : 'Paciente'}
+                </p>
             </div>
 
             <ul className="flex flex-col space-y-2 p-4">
@@ -85,9 +87,9 @@ const Sidebar = () => {
                             <ul className="ml-8 mt-2 space-y-2">
                                 <li>
                                     <Link
-                                        to='/dentista/jornada'
+                                        to='/odontologo/jornada'
                                         className={`flex items-center p-3 rounded-lg transition-colors duration-200 group 
-                ${location.pathname === '/dentista/jornada' ? 'bg-gray-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 hover:text-blue-700 hover:font-semibold'}`
+                ${location.pathname === '/odontologo/jornada' ? 'bg-gray-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 hover:text-blue-700 hover:font-semibold'}`
                                         }
                                     >
                                         Jornada
@@ -95,9 +97,9 @@ const Sidebar = () => {
                                 </li>
                                 <li>
                                     <Link
-                                        to='/dentista/inactividad'
+                                        to='/odontologo/inactividad'
                                         className={`flex items-center p-3 rounded-lg transition-colors duration-200 group 
-                ${location.pathname === '/dentista/inactividad' ? 'bg-gray-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 hover:text-blue-700 hover:font-semibold'}`
+                ${location.pathname === '/odontologo/inactividad' ? 'bg-gray-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 hover:text-blue-700 hover:font-semibold'}`
                                         }
                                     >
                                         Inactividad
@@ -107,7 +109,6 @@ const Sidebar = () => {
                         )}
                     </li>
                 )}
-
             </ul>
 
 

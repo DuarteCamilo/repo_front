@@ -4,34 +4,44 @@ import { areFieldsEmpty, isValidEmail, isValidPassword } from '../../helpers/val
 import { toast } from 'react-toastify';
 import Input from '../Input/Input';
 
-const DentistForm = ({ initialData = {}, onSave, onClose }) => {
+const DentistForm = ({ initialData = { user: {}, dentist: {} }, onSave, onClose }) => {
     const [formData, setFormData] = useState(initialData);
     const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+        setFormData((prevData) => {
+            const updatedData = { ...prevData };
+
+            if (name in prevData.user) {
+                updatedData.user = { ...prevData.user, [name]: value };
+            } else if (name in prevData.dentist) {
+                updatedData.dentist = { ...prevData.dentist, [name]: value };
+            }
+
+            return updatedData;
+        });
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (areFieldsEmpty(Object.values(formData))) {
-            toast.error('Todos los campos son obligatorios', { theme: 'light' })
+        if (areFieldsEmpty([...Object.values(formData.user), ...Object.values(formData.dentist)])) {
+            toast.error('Todos los campos son obligatorios', { theme: 'light' });
             return;
         }
 
-        if (!isValidEmail(formData.email)) {
-            toast.error('Correo electrónico inválido', { theme: 'light' })
-            return
+        if (!isValidEmail(formData.user.email)) {
+            toast.error('Correo electrónico inválido', { theme: 'light' });
+            return;
         }
 
-        if (!isValidPassword(formData.password)) {
-            toast.error('La contraseña debe tener al menos 6 caracteres', { theme: 'light' })
-            return
+        if (!isValidPassword(formData.user.password)) {
+            toast.error('La contraseña debe tener al menos 6 caracteres', { theme: 'light' });
+            return;
         }
 
-        onSave(formData);
+        onSave(formData.user, formData.dentist);
     }
 
     const handleShowPassword = () => setShowPassword((prev) => !prev);
@@ -43,7 +53,7 @@ const DentistForm = ({ initialData = {}, onSave, onClose }) => {
                 type="text"
                 name="license"
                 placeholder="Ingresa la matrícula"
-                value={formData.license || ''}
+                value={formData.dentist.license || ''}
                 onChange={handleChange}
             />
 
@@ -52,7 +62,7 @@ const DentistForm = ({ initialData = {}, onSave, onClose }) => {
                 type="text"
                 name="name"
                 placeholder="Ingresa el nombre"
-                value={formData.name || ''}
+                value={formData.user.name || ''}
                 onChange={handleChange}
             />
 
@@ -61,7 +71,7 @@ const DentistForm = ({ initialData = {}, onSave, onClose }) => {
                 type="text"
                 name="lastname"
                 placeholder="Ingresa el apellido"
-                value={formData.lastname || ''}
+                value={formData.user.lastname || ''}
                 onChange={handleChange}
             />
 
@@ -70,11 +80,11 @@ const DentistForm = ({ initialData = {}, onSave, onClose }) => {
                 type="email"
                 name="email"
                 placeholder="Ingresa el correo electrónico"
-                value={formData.email || ''}
+                value={formData.user.email || ''}
                 onChange={handleChange}
             />
 
-            <Input
+            {/* <Input
                 icon={<RiUserLine />}
                 type="text"
                 name="username"
@@ -82,13 +92,13 @@ const DentistForm = ({ initialData = {}, onSave, onClose }) => {
                 value={formData.username || ''}
                 onChange={handleChange}
             />
-
+ */}
             <Input
                 icon={<RiLockLine />}
                 type='password'
                 name="password"
                 placeholder="Ingresa la contraseña"
-                value={formData.password || ''}
+                value={formData.user.password || ''}
                 onChange={handleChange}
                 showPassword={showPassword}
                 handleShowPassword={handleShowPassword}
@@ -102,7 +112,7 @@ const DentistForm = ({ initialData = {}, onSave, onClose }) => {
                     Cancelar
                 </button>
                 <button
-                    onClick={handleSubmit}
+                    type='submit'
                     className="w-full py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium transition-transform hover:scale-105"
                 >
                     Guardar

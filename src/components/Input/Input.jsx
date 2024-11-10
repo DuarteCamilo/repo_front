@@ -1,7 +1,7 @@
 import { RiEyeLine, RiEyeOffLine } from 'react-icons/ri';
 import './Input.css';
 
-const Input = ({ icon, type, name, placeholder, value, onChange, showPassword, handleShowPassword }) => {
+const Input = ({ icon, type, name, placeholder, value, onChange, showPassword, handleShowPassword, disabled }) => {
     return (
         <div className='relative'>
             {icon && <span className='icon'>{icon}</span>}
@@ -12,6 +12,7 @@ const Input = ({ icon, type, name, placeholder, value, onChange, showPassword, h
                 className='custom-input'
                 value={value}
                 onChange={onChange}
+                disabled={disabled}
             />
             {type === 'password' && (
                 showPassword ? (

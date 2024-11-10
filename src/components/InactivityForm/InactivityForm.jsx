@@ -2,7 +2,10 @@ import { useState } from "react";
 import { areFieldsEmpty } from "../../helpers/validationHelper"
 import { toast } from "react-toastify"
 import Select from "../Select/Select";
-import Input from "../Input/Input";
+import DatePicker from "react-datepicker";
+import { FaCalendarAlt } from "react-icons/fa";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const InactivityForm = ({ onSave }) => {
     const [startDate, setStartDate] = useState('');
@@ -17,6 +20,16 @@ const InactivityForm = ({ onSave }) => {
             return;
         }
 
+        if (new Date(startDate) > new Date(endDate)) {
+            toast.error('La fecha de inicio no puede ser mayor a la fecha de fin', { theme: 'light' });
+            return;
+        }
+
+        if (new Date() > new Date(startDate)) {
+            toast.error('La fecha de inicio no puede ser menor a la fecha actual', { theme: 'light' });
+            return;
+        }
+
         onSave({ startDate, endDate, reason });
     }
 
@@ -27,21 +40,30 @@ const InactivityForm = ({ onSave }) => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <h3>Registrar Inactividad Temporal</h3>
+            <div className="relative">
+                <DatePicker
+                    id="startDate"
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    minDate={new Date()}
+                    placeholderText="Selecciona la fecha de inicio"
+                    className="custom-input"
+                />
+                <FaCalendarAlt className="icon" />
+            </div>
 
-            <Input
-                type='date'
-                name='startDate'
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-            />
-
-            <Input
-                type='date'
-                name='endDate'
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-            />
+            <div className="relative">
+                <DatePicker
+                    id="endDate"
+                    selected={endDate}
+                    onChange={(date) => setEndDate(date)}
+                    minDate={new Date(startDate)}
+                    placeholderText="Selecciona la fecha de fin"
+                    className="custom-input"
+                    disabled={!startDate}
+                />
+                <FaCalendarAlt className="icon" />
+            </div>
 
             <Select
                 name='reason'
