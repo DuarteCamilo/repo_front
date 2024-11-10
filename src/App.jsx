@@ -27,27 +27,27 @@ function App() {
           }
         />
         <Route
-          path='/dentista/citas'
+          path='/odontologo/citas'
           element={
             <ProtectedRoute element={<Shifts />} />
           }
         />
         <Route
-          path='/dentista/jornada'
+          path='/odontologo/jornada'
           element={
             <ProtectedRoute element={<DentistSchedule />} />
           }
         />
 
         <Route
-          path='/dentista/inactividad'
+          path='/odontologo/inactividad'
           element={
             <ProtectedRoute element={<DentistInactivity />} />
           }
         />
 
         <Route
-          path='/admin/dentistas'
+          path='/admin/odontologos'
           element={
             <ProtectedRoute element={<Dentists />} />
           }
