@@ -10,11 +10,15 @@ const DentistInactivity = () => {
     }
 
     return (
-        <div className="flex">
+        <div className="flex min-h-screen">
             <Sidebar />
-            <div className="p-6 flex-1">
-                <h2>Gestión De Estado</h2>
-                <InactivityForm onSave={saveInactivity} />
+            <div className="flex-1 flex flex-col items-center p-8">
+                <div className="w-full max-w-lg rounded-2xl shadow-lg p-8 mt-10">
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
+                        Registrar Inactividad
+                    </h2>
+                    <InactivityForm onSave={saveInactivity} />
+                </div>
             </div>
         </div>
     )

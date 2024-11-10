@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { FaEdit, FaTrash } from 'react-icons/fa'
 import { toast } from 'react-toastify';
-import { deleteDentist, fetchDentists, registerDentist, updateDentist } from '../../services/dentistService'
+import { deleteDentist, fetchDentists, registerCompleteDentist, registerDentist, updateDentist } from '../../services/dentistService'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal';
 import RegisterDentistModal from '../../components/RegisterDentistModal/RegisterDentistModal';
 import EditDentistModal from '../../components/EditDentistModal/EditDentistModal';
 import '../../styles/Table.css'
+import { fetchUser } from '../../services/userService';
 
 const Dentists = () => {
     const [dentists, setDentists] = useState([])
@@ -20,7 +21,22 @@ const Dentists = () => {
         const loadDentists = async () => {
             try {
                 const data = await fetchDentists()
-                setDentists(data)
+
+                const dentistsWithUser = await Promise.all(
+                    data.map(async (dentist) => {
+                        const user = await getUser(dentist.user_id);
+                        let absenceDays = 0;
+
+                        if (dentist.inactivity_start_date && dentist.inactivity_end_date) {
+                            const startDate = new Date(dentist.inactivity_start_date);
+                            const endDate = new Date(dentist.inactivity_end_date);
+                            absenceDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                        }
+
+                        return { ...dentist, user, absenceDays };
+                    })
+                );
+                setDentists(dentistsWithUser)
             } catch (error) {
                 console.error('Error loading dentists', error)
             }
@@ -28,12 +44,11 @@ const Dentists = () => {
         loadDentists()
     }, [])
 
-    const handleRegisterDentist = async (newDentist) => {
+    const handleRegisterDentist = async (user, newDentist) => {
         try {
-            const response = await registerDentist(newDentist)
-            console.log(response.dentist)
-            setDentists([...dentists, response.dentist])
-            toast.success(response.message, { theme: 'light' })
+            await registerCompleteDentist(user, newDentist)
+            toast.success('Odontólogo registrado correctamente', { theme: 'light' })
+            setDentists(prevDentists => [...prevDentists, { newDentist, user }])
         } catch (error) {
             toast.error(error.message || 'Error registrando odontólogo', { theme: 'light' })
         } finally {
@@ -41,18 +56,19 @@ const Dentists = () => {
         }
     }
 
-    const handleEdit = (license) => {
-        const dentist = dentists.find((d) => d.license === license)
+    const handleEdit = (id) => {
+        const dentist = dentists.find((d) => d.id === id)
         setSelectedDentist(dentist)
         setShowEditModal(true)
     }
 
-    const handleUpdateDentist = async (updatedDentist) => {
+    const handleUpdateDentist = async (user, updatedDentist) => {
         try {
-            const response = await updateDentist(updatedDentist.license, updatedDentist)
-            setDentists(dentists.map((d) => (d.license === updatedDentist.license ? response.dentist : d)))
+            const response = await updateDentist(updatedDentist.user, updatedDentist)
             toast.success(response.message, { theme: 'light' })
+            setDentists((prevDentists) => prevDentists.map((d) => (d.id === updatedDentist.id ? updatedDentist : d)))
         } catch (error) {
+            console.log(error.message)
             toast.error(error.message || 'Error actualizando odontólogo', { theme: 'light' })
         } finally {
             setShowEditModal(false)
@@ -60,17 +76,17 @@ const Dentists = () => {
         }
     }
 
-    const handleDelete = (license) => {
-        const dentist = dentists.find((d) => d.license === license)
+    const handleDelete = (id) => {
+        const dentist = dentists.find((d) => d.id === id)
         setSelectedDentist(dentist)
         setShowModal(true)
     }
 
     const handleConfirmDelete = async () => {
         try {
-            const response = await deleteDentist(selectedDentist.license);
-            setDentists(dentists.filter((d) => d.license !== selectedDentist.license));
-            toast.success(response.message, { theme: 'light' });
+            await deleteDentist(selectedDentist.id, selectedDentist.user_id);
+            toast.success('Odontólogo eliminado correctamente', { theme: 'light' });
+            setDentists((prevDentists) => prevDentists.filter((d) => d.id !== selectedDentist.id));
         } catch (error) {
             toast.error(error.message || 'Error eliminando odontólogo', { theme: 'light' });
         } finally {
@@ -80,16 +96,20 @@ const Dentists = () => {
     }
 
     const filteredDentists = dentists.filter((dentist) => {
-        const fullName = `${dentist.name} ${dentist.lastname}`.toLowerCase()
+        const fullName = `${dentist.user.name} ${dentist.user.lastname}`.toLowerCase()
         return (
-            dentist.license.includes(searchTerm) ||
+            // dentist.user.license.includes(searchTerm) ||
             fullName.includes(searchTerm.toLowerCase())
         )
     })
 
+    const getUser = (id) => {
+        return fetchUser(id);
+    }
+
     return (
         <div className="flex">
-            <Sidebar />
+            <Sidebar /> 
             <div className="p-6 flex-1">
                 <div className='flex justify-between mb-4'>
                     <input
@@ -120,22 +140,22 @@ const Dentists = () => {
                     </thead>
                     <tbody>
                         {filteredDentists.map((dentist) => (
-                            <tr key={dentist.license}>
+                            <tr key={`${dentist.id}-${dentist.user_id}`}>
                                 <td>{dentist.license}</td>
-                                <td>{dentist.name}</td>
-                                <td>{dentist.lastname}</td>
+                                <td>{dentist.user.name}</td>
+                                <td>{dentist.user.lastname}</td>
                                 <td>
-                                    {dentist.startTime} - {dentist.endTime}
+                                    {dentist.workday_start_time} - {dentist.workday_end_time}
                                 </td>
                                 <td className="justify-center text-center">
-                                    {dentist.active ?
+                                    {dentist.absenceDays === 0 ?
                                         <span className='items-center justify-center px-3 py-1 text-xs font-semibold rounded-full bg-green-100 border border-green-300 text-green-700 uppercase'>
                                             Activo
                                         </span>
                                         :
                                         <span className='items-center justify-center px-3 py-1 text-xs font-semibold rounded-full bg-red-100 border border-red-300 text-red-700 uppercase'>
                                             Inactivo
-                                            {dentist.absenceDays && (
+                                            {dentist.absenceDays > 0 && (
                                                 <span className='ml-1 text-xs text-red-700'>
                                                     ({dentist.absenceDays})
                                                 </span>
@@ -145,14 +165,14 @@ const Dentists = () => {
                                 </td>
                                 <td className='text-center'>
                                     <button
-                                        onClick={() => handleEdit(dentist.license)}
+                                        onClick={() => handleEdit(dentist.id)}
                                         className='mr-2 text-yellow-400 px-3 py-1 inline-flex items-center'
                                     >
                                         <FaEdit className='mr-1' /> Editar
                                     </button>
 
                                     <button
-                                        onClick={() => handleDelete(dentist.license)}
+                                        onClick={() => handleDelete(dentist.id)}
                                         className='text-red-500 px-3 py-1 inline-flex items-center'
                                     >
                                         <FaTrash className='mr-1' /> Eliminar

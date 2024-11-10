@@ -39,9 +39,9 @@ const Login = () => {
                 localStorage.setItem('user', JSON.stringify(data.user))
 
                 if (data.user.role === 'admin') {
-                    navigate('/admin/dentistas')
+                    navigate('/admin/odontologos')
                 } else if (data.user.role === 'dentist') {
-                    navigate('/dentista/citas')
+                    navigate('/odontologo/citas')
                 } else if (data.user.role === 'patient') {
                     navigate('/paciente/inicio')
                 }
