@@ -27,35 +27,40 @@ function App() {
           }
         />
         <Route
-          path='/dentista/citas'
+          path='/odontologo/citas'
           element={
-            <ProtectedRoute element={<Shifts />} />
+            // <ProtectedRoute element={<Shifts />} />
+            <Shifts />
           }
         />
         <Route
-          path='/dentista/jornada'
+          path='/odontologo/jornada'
           element={
-            <ProtectedRoute element={<DentistSchedule />} />
-          }
-        />
-
-        <Route
-          path='/dentista/inactividad'
-          element={
-            <ProtectedRoute element={<DentistInactivity />} />
+            // <ProtectedRoute element={<DentistSchedule />} />
+            <DentistSchedule />
           }
         />
 
         <Route
-          path='/admin/dentistas'
+          path='/odontologo/inactividad'
           element={
-            <ProtectedRoute element={<Dentists />} />
+            // <ProtectedRoute element={<DentistInactivity />} />
+            <DentistInactivity />
+          }
+        />
+
+        <Route
+          path='/admin/odontologos'
+          element={
+            // <ProtectedRoute element={<Dentists />} />
+            <Dentists />
           }
         />
         <Route
           path='/admin/pacientes'
           element={
-            <ProtectedRoute element={<Patients />} />
+            // <ProtectedRoute element={<Patients />} />
+            <Patients />
           }
         />
         <Route path='*' element={<Error404 />} />

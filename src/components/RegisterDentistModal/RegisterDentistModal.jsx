@@ -3,14 +3,18 @@ import '../../styles/Modal.css';
 
 const RegisterDentistModal = ({ show, onClose, onSave }) => {
     if (!show) return null;
-
-    const initialData = {
-        license: '',
-        name: '',
-        lastname: '',
-        email: '',
-        password: ''
-    };
+   const initialData = {
+        user: {
+            name: '',
+            lastname: '',
+            email: '',
+            password: '',
+            role_ids: [3]
+        },
+        dentist: {
+            license: '',
+        }
+    }
 
     return (
         <div className="modal-overlay">

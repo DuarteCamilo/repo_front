@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { fetchPatients } from "../../services/patientService"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import '../../styles/Table.css'
+import { fetchUser } from "../../services/userService"
 
 const Patients = () => {
     const [patients, setPatients] = useState([])
@@ -11,7 +12,15 @@ const Patients = () => {
         const loadPatients = async () => {
             try {
                 const data = await fetchPatients();
-                setPatients(data);
+
+                const patientsWithUser = await Promise.all(
+                    data.map(async (patient) => {
+                        const user = await fetchUser(patient.user_id);
+                        return { ...patient, user };
+                    })
+                );
+
+                setPatients(patientsWithUser);
             } catch (error) {
                 console.error('Error loading patients', error)
             }
@@ -19,12 +28,12 @@ const Patients = () => {
 
         loadPatients();
 
-    }, [])
+    }, []);
 
     const filteredPatients = patients.filter((patient) => {
         const fullName = `${patient.firstName} ${patient.lastName}`.toLowerCase()
         return (
-            patient.dni.includes(searchTerm) ||
+            // patient.dni.includes(searchTerm) ||
             fullName.includes(searchTerm.toLowerCase())
         )
     })
@@ -47,8 +56,8 @@ const Patients = () => {
                     <thead>
                         <tr>
                             <th>DNI</th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
                             <th>Ciudad Residencia</th>
                             <th>Correo Electrónico</th>
                         </tr>
@@ -57,10 +66,10 @@ const Patients = () => {
                         {filteredPatients.map((patient) => (
                             <tr key={patient.dni}>
                                 <td>{patient.dni}</td>
-                                <td>{patient.firstName}</td>
-                                <td>{patient.lastName}</td>
-                                <td>{patient.city}</td>
-                                <td>{patient.email}</td>
+                                <td>{patient.user.name}</td>
+                                <td>{patient.user.lastname}</td>
+                                <td>{patient.address}</td>
+                                <td>{patient.user.email}</td>
                             </tr>
                         ))}
                     </tbody>

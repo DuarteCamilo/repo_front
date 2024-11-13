@@ -1,8 +1,8 @@
 import axios from "axios";
-import config from "../config/config";
 
 const api = axios.create({
-    baseURL: config.API_URL,
+    baseURL: import.meta.env.VITE_API_URL,
+    // baseURL: 'http://localhost:3000/api',
     headers: {
         "Content-Type": "application/json",
     },
@@ -13,37 +13,98 @@ export const fetchDentists = async () => {
         const response = await api.get('/dentists');
         return response.data;
     } catch (error) {
-        console.error('Error fetching dentists:', error.response?.data?.message || error.message);
-        throw new Error(error.response?.data?.message || 'Error fetching dentists');
+        throw new Error(error.response?.data?.detail || 'Error fetching dentists');
     }
 };
+
+export const registerUser = async (user) => {
+    try {
+        const response = await api.post('/users', user);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Error registering user';
+        throw new Error(errorMessage);
+    }
+}
 
 export const registerDentist = async (dentist) => {
     try {
         const response = await api.post('/dentists', dentist);
         return response.data;
     } catch (error) {
-        console.error('Error registering dentist:', error.response?.data?.message || error.message);
-        throw new Error(error.response?.data?.message || 'Error registering dentist');
+        throw new Error(error.response?.data?.detail || 'Error registering dentist');
     }
 }
 
-export const updateDentist = async (license, dentist) => {
+export const registerCompleteDentist = async (user, dentistData) => {
     try {
-        const response = await api.put(`/dentists/${license}`, dentist);
-        return response.data;
-    } catch (error) {
-        console.error('Error updating dentist:', error.response?.data?.message || error.message);
-        throw new Error(error.response?.data?.message || 'Error updating dentist');
-    }
-}
+        const registeredUser = await registerUser(user);
 
-export const deleteDentist = async (license) => {
-    try {
-        const response = await api.delete(`/dentists/${license}`);
-        return response.data;
+        const dentist = {
+            ...dentistData,
+            workday_start_time: '06:21:50.095Z',
+            workday_end_time: '06:21:50.095Z',
+            user_id: registeredUser.id,
+        };
+
+        const response = await registerDentist(dentist);
+        return response;
     } catch (error) {
-        console.error('Error deleting dentist:', error.response?.data?.message || error.message);
-        throw new Error(error.response?.data?.message || 'Error deleting dentist');
+        const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Error registering user';
+        throw new Error(errorMessage);
     }
 };
+
+export const updateUser = async (user) => {
+    try {
+        const response = await api.put(`/users/${user.id}`, user);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Error registering user';
+        throw new Error(errorMessage);
+    }
+}
+
+export const updateDentist = async (user, dentistData) => {
+    console.log('dentistData:', dentistData);
+    try {
+        const response = await api.put(`/dentists/${dentistData.id}`, dentistData);
+        await updateUser(user);
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Error updating user';
+        throw new Error(errorMessage);
+    }
+}
+
+export const deleteUser = async (id) => {
+    try {
+        const response = await api.delete(`/users/${id}`);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Error registering user';
+        throw new Error(errorMessage);
+    }
+}
+
+export const deleteDentist = async (dentistId, userId) => {
+    try {
+        const response = await api.delete(`/dentists/${dentistId}`);
+        await deleteUser(userId);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Error registering user';
+        throw new Error(errorMessage);
+    }
+}
+
+export const registerSchedule = async (license, schedule) => {
+    try {
+        const response = await api.post(`/dentists/${license}/schedule`, schedule);
+        return response.data;
+    } catch (error) {
+        console.error('Error registering schedule:', error.response?.data?.message || error.message);
+        throw new Error(error.response?.data?.message || 'Error registering schedule');
+    }
+}
