@@ -29,33 +29,38 @@ function App() {
         <Route
           path='/odontologo/citas'
           element={
-            <ProtectedRoute element={<Shifts />} />
+            // <ProtectedRoute element={<Shifts />} />
+            <Shifts />
           }
         />
         <Route
           path='/odontologo/jornada'
           element={
-            <ProtectedRoute element={<DentistSchedule />} />
+            // <ProtectedRoute element={<DentistSchedule />} />
+            <DentistSchedule />
           }
         />
 
         <Route
           path='/odontologo/inactividad'
           element={
-            <ProtectedRoute element={<DentistInactivity />} />
+            // <ProtectedRoute element={<DentistInactivity />} />
+            <DentistInactivity />
           }
         />
 
         <Route
           path='/admin/odontologos'
           element={
-            <ProtectedRoute element={<Dentists />} />
+            // <ProtectedRoute element={<Dentists />} />
+            <Dentists />
           }
         />
         <Route
           path='/admin/pacientes'
           element={
-            <ProtectedRoute element={<Patients />} />
+            // <ProtectedRoute element={<Patients />} />
+            <Patients />
           }
         />
         <Route path='*' element={<Error404 />} />
