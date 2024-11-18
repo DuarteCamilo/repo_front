@@ -17,3 +17,13 @@ export const fetchUser = async (id) => {
         throw new Error(error.response?.data?.message || 'Error fetching user');
     }
 }
+
+export const getRoleUser = async (id) => {
+    try {
+        const response = await api.get(`/roles/${id}`);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Error';
+        throw new Error(errorMessage);
+    }
+}

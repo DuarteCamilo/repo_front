@@ -24,6 +24,7 @@ const Sidebar = () => {
     const [isScheduleOpen, setIsScheduleOpen] = useState(isInScheduleRoute);
 
     const user = JSON.parse(localStorage.getItem('user')) || {};
+    console.log(user);
     const { username = '', role = '' } = user;
 
     const getInitials = (name) => {
@@ -35,6 +36,7 @@ const Sidebar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('user')
+        localStorage.removeItem('roleUser')
         navigate('/')
     };
 
