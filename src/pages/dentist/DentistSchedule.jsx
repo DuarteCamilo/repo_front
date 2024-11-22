@@ -1,21 +1,39 @@
+import { useEffect, useState } from 'react'
 import { toast } from "react-toastify"
 import WorkScheduleForm from "../../components/WorkScheduleForm/WorkScheduleForm"
 import Sidebar from "../../components/Sidebar/Sidebar"
-import { registerSchedule } from "../../services/dentistService"
+import { registerSchedule,fetchDentist } from "../../services/dentistService"
 
 const DentistSchedule = () => {
-    const handleRegisterSchedule = async (license, schedule) => {
+    const [initialData, setInitialData] = useState([])
+
+    useEffect(() => {
+        const loadSchedule = async () => {
+            try {
+                const user = JSON.parse(localStorage.getItem('user')) || {};
+                const response = await fetchDentist(user.dentist_id);
+
+                const initialData = {
+                    startTime: response.workday_start_time,
+                    endTime: response.workday_end_time,
+                }
+                
+                setInitialData(initialData)
+            } catch (error) {
+                console.error('Error loading schedule', error)
+            }
+        }
+        loadSchedule()
+    }, [])
+    
+    const handleRegisterSchedule = async (schedule) => {
         try {
-            const response = await registerSchedule(license, schedule);
+            const user = JSON.parse(localStorage.getItem('user')) || {};
+            await registerSchedule(user.dentist_id, schedule);
             toast.success('Jornada Registrada', { theme: 'light' });
         } catch (error) {
             toast.error(error.message || 'Error registrando jornada laboral', { theme: 'light' });
         }
-    }
-
-    const initialData = {
-        startTime: '',
-        endTime: '',
     }
 
     return (

@@ -64,9 +64,9 @@ const Dentists = () => {
 
     const handleUpdateDentist = async (user, updatedDentist) => {
         try {
-            const response = await updateDentist(updatedDentist.user, updatedDentist)
-            toast.success(response.message, { theme: 'light' })
-            setDentists((prevDentists) => prevDentists.map((d) => (d.id === updatedDentist.id ? updatedDentist : d)))
+            await updateDentist(user, updatedDentist)
+            toast.success('Odontólogo actualizado correctamente', { theme: 'light' })
+            // setDentists((prevDentists) => prevDentists.map((d) => (d.id === updatedDentist.id ? updatedDentist : d)))
         } catch (error) {
             console.log(error.message)
             toast.error(error.message || 'Error actualizando odontólogo', { theme: 'light' })

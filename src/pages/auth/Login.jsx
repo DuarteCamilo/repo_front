@@ -34,15 +34,15 @@ const Login = () => {
 
     try {
       const data = await loginUser(email, password);
+      
+      if (data) {
+        localStorage.setItem("user", JSON.stringify(data));
 
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        if (data.user.role === "admin") {
+        if (data.is_admin) {
           navigate("/admin/odontologos");
-        } else if (data.user.role === "dentist") {
+        } else if (data.dentist_id != 0 && data.patient_id == null) {
           navigate("/odontologo/citas");
-        } else if (data.user.role === "patient") {
+        } else if (data.patient_id != 0) {
           navigate("/paciente/inicio");
         }
       }

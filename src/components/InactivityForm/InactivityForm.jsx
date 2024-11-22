@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { areFieldsEmpty } from "../../helpers/validationHelper"
 import { toast } from "react-toastify"
 import Select from "../Select/Select";
@@ -7,44 +7,60 @@ import { FaCalendarAlt } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 
 
-const InactivityForm = ({ onSave }) => {
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [reason, setReason] = useState('');
+const InactivityForm = ({ inactivity = {}, onSave }) => {
+    const [inactivityData, setInactivity] = useState(inactivity);
+
+    useEffect(() => {
+        setInactivity(inactivity);
+    }, [inactivity]);
+
+    const handleDateChange = (field, date) => {
+        setInactivity((prevData) => ({
+            ...prevData,
+            [field]: date,  
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (areFieldsEmpty([startDate, endDate, reason])) {
+        let { startDate, endDate } = inactivityData;
+        startDate = startDate ? new Date(startDate).toISOString().split('T')[0] : null;
+        endDate = endDate ? new Date(endDate).toISOString().split('T')[0] : null;
+        console.log(startDate)
+        console.log(endDate)
+
+        if (areFieldsEmpty([startDate, endDate])) {
             toast.error('Todos los campos son obligatorios', { theme: 'light' });
             return;
         }
 
-        if (new Date(startDate) > new Date(endDate)) {
+        if (startDate > endDate) {
             toast.error('La fecha de inicio no puede ser mayor a la fecha de fin', { theme: 'light' });
             return;
         }
 
-        if (new Date() > new Date(startDate)) {
+        const today = new Date().toISOString().split('T')[0];
+        if (startDate < today) {
             toast.error('La fecha de inicio no puede ser menor a la fecha actual', { theme: 'light' });
             return;
         }
 
-        onSave({ startDate, endDate, reason });
+        onSave({ startDate, endDate });
     }
 
-    const options = [
-        { value: 'vacaciones', label: 'Vacaciones' },
-        { value: 'incapacidad', label: 'Incapacidad' }
-    ];
+    // const options = [
+    //     { value: 'vacaciones', label: 'Vacaciones' },
+    //     { value: 'incapacidad', label: 'Incapacidad' }
+    // ];
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
                 <DatePicker
                     id="startDate"
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
+                    selected={inactivityData.startDate}
+                    onChange={(date) => handleDateChange("startDate", date)}
                     minDate={new Date()}
                     placeholderText="Selecciona la fecha de inicio"
                     className="custom-input"
@@ -55,23 +71,23 @@ const InactivityForm = ({ onSave }) => {
             <div className="relative">
                 <DatePicker
                     id="endDate"
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                    minDate={new Date(startDate)}
+                    selected={inactivityData.endDate}
+                    onChange={(date) => handleDateChange("endDate", date)} 
+                    minDate={new Date(inactivityData.startDate)}
                     placeholderText="Selecciona la fecha de fin"
                     className="custom-input"
-                    disabled={!startDate}
+                    disabled={!inactivityData.startDate}
                 />
                 <FaCalendarAlt className="icon" />
             </div>
-
+{/* 
             <Select
                 name='reason'
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 options={options}
                 placeholder={'Selecciona un motivo'}
-            />
+            /> */}
 
             <button
                 type="submit"

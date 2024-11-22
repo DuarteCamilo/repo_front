@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { areFieldsEmpty } from '../../helpers/validationHelper';
 import { toast } from 'react-toastify';
 import Input from '../Input/Input';
 
 const WorkScheduleForm = ({ initialData = {}, onSave }) => {
     const [schedule, setSchedule] = useState(initialData);
+
+    useEffect(() => {
+        setSchedule(initialData);
+    }, [initialData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,7 +30,7 @@ const WorkScheduleForm = ({ initialData = {}, onSave }) => {
             return;
         }
 
-        onSave('12345', schedule);
+        onSave(schedule);
     }
 
     return (
