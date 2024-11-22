@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { RiBuildingLine, RiLockLine, RiMailLine, RiUserLine } from 'react-icons/ri'
-import { Link } from 'react-router-dom'
+import { Link , useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Input from '../../components/Input/Input'
 import Select from '../../components/Select/Select'
 import SubmitButton from '../../components/SubmitButton/SubmitButton'
+import { registerUser } from "../../services/authService";
 import { areFieldsEmpty, isValidDNI, isValidEmail, isValidPassword, passwordsMatch } from '../../helpers/validationHelper'
 
 const Register = () => {
@@ -18,6 +19,7 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [passwordConfirm, setPasswordConfirm] = useState('')
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
+    const navigate = useNavigate();
 
     const handleShowPassword = () => {
         setShowPassword(!showPassword)
@@ -27,7 +29,7 @@ const Register = () => {
         setShowPasswordConfirm(!showPasswordConfirm)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         if (areFieldsEmpty([dni, name, lastName, city, email, user, password, passwordConfirm])) {
@@ -65,7 +67,26 @@ const Register = () => {
             return
         }
 
-        console.log(dni, name, lastName, city, email, password, passwordConfirm)
+        const userRegister = {
+            email : email,
+            password : password,
+            name : name,
+            lastname : lastName,
+            is_admin : false,
+        }
+
+        const patient = {
+            dni : dni,
+            address : city,
+        }
+
+        try {
+          await registerUser(userRegister,patient);
+          toast.success('Usuario Registrado', { theme: 'light' });
+          navigate("/");
+        } catch (error) {
+          toast.error(error.message || "Error de conexión", { theme: "light" });
+        }
     }
 
     const cityOptions = [

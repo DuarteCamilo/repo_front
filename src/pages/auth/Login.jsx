@@ -6,7 +6,6 @@ import Input from "../../components/Input/Input";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import { loginUser } from "../../services/authService";
 import { areFieldsEmpty, isValidEmail } from "../../helpers/validationHelper";
-import { getRoleUser } from '../../services/userService';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -35,17 +34,15 @@ const Login = () => {
 
     try {
       const data = await loginUser(email, password);
-      const dataRole = await getRoleUser(data.id);
       
-      if ((data) && (dataRole)) {
+      if (data) {
         localStorage.setItem("user", JSON.stringify(data));
-        localStorage.setItem("roleUser", JSON.stringify(dataRole));
 
-        if (dataRole.name === "admin") {
+        if (data.is_admin) {
           navigate("/admin/odontologos");
-        } else if (dataRole.name === "dentist") {
+        } else if (data.dentist_id != 0 && data.patient_id == null) {
           navigate("/odontologo/citas");
-        } else if (dataRole.name === "patient") {
+        } else if (data.patient_id != 0) {
           navigate("/paciente/inicio");
         }
       }

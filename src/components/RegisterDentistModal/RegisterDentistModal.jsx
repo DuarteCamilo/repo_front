@@ -5,11 +5,11 @@ const RegisterDentistModal = ({ show, onClose, onSave }) => {
     if (!show) return null;
    const initialData = {
         user: {
-            name: '',
-            lastname: '',
             email: '',
             password: '',
-            role_ids: [3]
+            name: '',
+            lastname: '',
+            is_admin: false
         },
         dentist: {
             license: '',

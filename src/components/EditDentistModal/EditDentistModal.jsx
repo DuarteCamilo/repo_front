@@ -8,11 +8,11 @@ const EditDentistModal = ({ show, onClose, onSave, dentist }) => {
         ? {
             user: {
                 id: dentist.user.id || '',
-                name: dentist.user.name || '',
-                lastname: dentist.user.lastname || '',
                 email: dentist.user.email || '',
                 password: dentist.user.password || '',
-                role_ids: dentist.user.role_ids || [3]
+                name: dentist.user.name || '',
+                lastname: dentist.user.lastname || '',
+                is_admin: false
             },
             dentist: {
                 id: dentist.id || '',

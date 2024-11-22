@@ -11,6 +11,7 @@ import Shifts from './pages/dentist/Shifts'
 import DentistSchedule from './pages/dentist/DentistSchedule'
 import DentistInactivity from './pages/dentist/DentistInactivity'
 import PatientHome from './pages/patient/PatientHome'
+import RegisterShifts from './pages/patient/RegisterShifts'
 
 function App() {
   return (
@@ -24,6 +25,12 @@ function App() {
           path='/paciente/inicio'
           element={
             <ProtectedRoute element={<PatientHome />} />
+          }
+        />
+        <Route
+          path='/paciente/registroCitas'
+          element={
+            <ProtectedRoute element={<RegisterShifts />} />
           }
         />
         <Route

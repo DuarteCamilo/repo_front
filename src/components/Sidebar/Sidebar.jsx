@@ -13,6 +13,7 @@ const sidebarItems = {
     ],
     patient: [
         { path: '/paciente/inicio', label: 'Citas', icon: <FaCalendar /> },
+        { path: '/paciente/registroCitas', label: 'Registro Cita', icon: <FaUser /> },
     ]
 };
 
@@ -24,8 +25,20 @@ const Sidebar = () => {
     const [isScheduleOpen, setIsScheduleOpen] = useState(isInScheduleRoute);
 
     const user = JSON.parse(localStorage.getItem('user')) || {};
-    console.log(user);
-    const { username = '', role = '' } = user;
+    
+    let username = '';
+    let role = '';
+
+    if (user.is_admin) {
+        username = user.name || '';
+        role = 'admin'
+    } else if (user.dentist_id != 0 && user.patient_id == null) {
+        username = user.name || '';
+        role = 'dentist'
+    } else if (user.patient_id != 0) {
+        username = user.name || '';
+        role = 'patient'
+    }
 
     const getInitials = (name) => {
         return name.split(' ').map(word => word[0]).join('').toUpperCase()
@@ -36,7 +49,6 @@ const Sidebar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('user')
-        localStorage.removeItem('roleUser')
         navigate('/')
     };
 
